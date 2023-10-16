@@ -10,7 +10,7 @@ using System.ComponentModel;
 
 namespace Azure.ResourceManager.Hci.Models
 {
-    /// <summary> Status of the cluster agent. </summary>
+    /// <summary> The status of the operation performed on the gallery image [Succeeded, Failed, InProgress]. </summary>
     public readonly partial struct HciClusterStatus : IEquatable<HciClusterStatus>
     {
         private readonly string _value;
@@ -22,28 +22,10 @@ namespace Azure.ResourceManager.Hci.Models
             _value = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        private const string NotYetRegisteredValue = "NotYetRegistered";
-        private const string ConnectedRecentlyValue = "ConnectedRecently";
-        private const string NotConnectedRecentlyValue = "NotConnectedRecently";
-        private const string DisconnectedValue = "Disconnected";
-        private const string ErrorValue = "Error";
-        private const string NotSpecifiedValue = "NotSpecified";
         private const string SucceededValue = "Succeeded";
         private const string FailedValue = "Failed";
         private const string InProgressValue = "InProgress";
 
-        /// <summary> NotYetRegistered. </summary>
-        public static HciClusterStatus NotYetRegistered { get; } = new HciClusterStatus(NotYetRegisteredValue);
-        /// <summary> ConnectedRecently. </summary>
-        public static HciClusterStatus ConnectedRecently { get; } = new HciClusterStatus(ConnectedRecentlyValue);
-        /// <summary> NotConnectedRecently. </summary>
-        public static HciClusterStatus NotConnectedRecently { get; } = new HciClusterStatus(NotConnectedRecentlyValue);
-        /// <summary> Disconnected. </summary>
-        public static HciClusterStatus Disconnected { get; } = new HciClusterStatus(DisconnectedValue);
-        /// <summary> Error. </summary>
-        public static HciClusterStatus Error { get; } = new HciClusterStatus(ErrorValue);
-        /// <summary> NotSpecified. </summary>
-        public static HciClusterStatus NotSpecified { get; } = new HciClusterStatus(NotSpecifiedValue);
         /// <summary> Succeeded. </summary>
         public static HciClusterStatus Succeeded { get; } = new HciClusterStatus(SucceededValue);
         /// <summary> Failed. </summary>

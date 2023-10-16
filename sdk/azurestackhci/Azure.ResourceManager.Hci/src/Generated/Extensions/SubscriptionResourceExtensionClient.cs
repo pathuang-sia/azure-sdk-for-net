@@ -17,8 +17,18 @@ namespace Azure.ResourceManager.Hci
     /// <summary> A class to add extension methods to SubscriptionResource. </summary>
     internal partial class SubscriptionResourceExtensionClient : ArmResource
     {
-        private ClientDiagnostics _hciClusterClustersClientDiagnostics;
-        private ClustersRestOperations _hciClusterClustersRestClient;
+        private ClientDiagnostics _galleryImageClientDiagnostics;
+        private GalleryImagesRestOperations _galleryImageRestClient;
+        private ClientDiagnostics _logicalNetworkClientDiagnostics;
+        private LogicalNetworksRestOperations _logicalNetworkRestClient;
+        private ClientDiagnostics _marketplaceGalleryImageClientDiagnostics;
+        private MarketplaceGalleryImagesRestOperations _marketplaceGalleryImageRestClient;
+        private ClientDiagnostics _networkInterfaceClientDiagnostics;
+        private NetworkInterfacesRestOperations _networkInterfaceRestClient;
+        private ClientDiagnostics _storageContainerClientDiagnostics;
+        private StorageContainersRestOperations _storageContainerRestClient;
+        private ClientDiagnostics _virtualHardDiskClientDiagnostics;
+        private VirtualHardDisksRestOperations _virtualHardDiskRestClient;
 
         /// <summary> Initializes a new instance of the <see cref="SubscriptionResourceExtensionClient"/> class for mocking. </summary>
         protected SubscriptionResourceExtensionClient()
@@ -32,8 +42,18 @@ namespace Azure.ResourceManager.Hci
         {
         }
 
-        private ClientDiagnostics HciClusterClustersClientDiagnostics => _hciClusterClustersClientDiagnostics ??= new ClientDiagnostics("Azure.ResourceManager.Hci", HciClusterResource.ResourceType.Namespace, Diagnostics);
-        private ClustersRestOperations HciClusterClustersRestClient => _hciClusterClustersRestClient ??= new ClustersRestOperations(Pipeline, Diagnostics.ApplicationId, Endpoint, GetApiVersionOrNull(HciClusterResource.ResourceType));
+        private ClientDiagnostics GalleryImageClientDiagnostics => _galleryImageClientDiagnostics ??= new ClientDiagnostics("Azure.ResourceManager.Hci", GalleryImageResource.ResourceType.Namespace, Diagnostics);
+        private GalleryImagesRestOperations GalleryImageRestClient => _galleryImageRestClient ??= new GalleryImagesRestOperations(Pipeline, Diagnostics.ApplicationId, Endpoint, GetApiVersionOrNull(GalleryImageResource.ResourceType));
+        private ClientDiagnostics LogicalNetworkClientDiagnostics => _logicalNetworkClientDiagnostics ??= new ClientDiagnostics("Azure.ResourceManager.Hci", LogicalNetworkResource.ResourceType.Namespace, Diagnostics);
+        private LogicalNetworksRestOperations LogicalNetworkRestClient => _logicalNetworkRestClient ??= new LogicalNetworksRestOperations(Pipeline, Diagnostics.ApplicationId, Endpoint, GetApiVersionOrNull(LogicalNetworkResource.ResourceType));
+        private ClientDiagnostics MarketplaceGalleryImageClientDiagnostics => _marketplaceGalleryImageClientDiagnostics ??= new ClientDiagnostics("Azure.ResourceManager.Hci", MarketplaceGalleryImageResource.ResourceType.Namespace, Diagnostics);
+        private MarketplaceGalleryImagesRestOperations MarketplaceGalleryImageRestClient => _marketplaceGalleryImageRestClient ??= new MarketplaceGalleryImagesRestOperations(Pipeline, Diagnostics.ApplicationId, Endpoint, GetApiVersionOrNull(MarketplaceGalleryImageResource.ResourceType));
+        private ClientDiagnostics NetworkInterfaceClientDiagnostics => _networkInterfaceClientDiagnostics ??= new ClientDiagnostics("Azure.ResourceManager.Hci", NetworkInterfaceResource.ResourceType.Namespace, Diagnostics);
+        private NetworkInterfacesRestOperations NetworkInterfaceRestClient => _networkInterfaceRestClient ??= new NetworkInterfacesRestOperations(Pipeline, Diagnostics.ApplicationId, Endpoint, GetApiVersionOrNull(NetworkInterfaceResource.ResourceType));
+        private ClientDiagnostics StorageContainerClientDiagnostics => _storageContainerClientDiagnostics ??= new ClientDiagnostics("Azure.ResourceManager.Hci", StorageContainerResource.ResourceType.Namespace, Diagnostics);
+        private StorageContainersRestOperations StorageContainerRestClient => _storageContainerRestClient ??= new StorageContainersRestOperations(Pipeline, Diagnostics.ApplicationId, Endpoint, GetApiVersionOrNull(StorageContainerResource.ResourceType));
+        private ClientDiagnostics VirtualHardDiskClientDiagnostics => _virtualHardDiskClientDiagnostics ??= new ClientDiagnostics("Azure.ResourceManager.Hci", VirtualHardDiskResource.ResourceType.Namespace, Diagnostics);
+        private VirtualHardDisksRestOperations VirtualHardDiskRestClient => _virtualHardDiskRestClient ??= new VirtualHardDisksRestOperations(Pipeline, Diagnostics.ApplicationId, Endpoint, GetApiVersionOrNull(VirtualHardDiskResource.ResourceType));
 
         private string GetApiVersionOrNull(ResourceType resourceType)
         {
@@ -42,47 +62,267 @@ namespace Azure.ResourceManager.Hci
         }
 
         /// <summary>
-        /// List all HCI clusters in a subscription.
+        /// Lists all of the gallery images in the specified subscription. Use the nextLink property in the response to get the next page of gallery images.
         /// <list type="bullet">
         /// <item>
         /// <term>Request Path</term>
-        /// <description>/subscriptions/{subscriptionId}/providers/Microsoft.AzureStackHCI/clusters</description>
+        /// <description>/subscriptions/{subscriptionId}/providers/Microsoft.AzureStackHCI/galleryImages</description>
         /// </item>
         /// <item>
         /// <term>Operation Id</term>
-        /// <description>Clusters_ListBySubscription</description>
+        /// <description>GalleryImages_ListAll</description>
         /// </item>
         /// </list>
         /// </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        /// <returns> An async collection of <see cref="HciClusterResource" /> that may take multiple service requests to iterate over. </returns>
-        public virtual AsyncPageable<HciClusterResource> GetHciClustersAsync(CancellationToken cancellationToken = default)
+        /// <returns> An async collection of <see cref="GalleryImageResource" /> that may take multiple service requests to iterate over. </returns>
+        public virtual AsyncPageable<GalleryImageResource> GetGalleryImagesAsync(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => HciClusterClustersRestClient.CreateListBySubscriptionRequest(Id.SubscriptionId);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => HciClusterClustersRestClient.CreateListBySubscriptionNextPageRequest(nextLink, Id.SubscriptionId);
-            return GeneratorPageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, e => new HciClusterResource(Client, HciClusterData.DeserializeHciClusterData(e)), HciClusterClustersClientDiagnostics, Pipeline, "SubscriptionResourceExtensionClient.GetHciClusters", "value", "nextLink", cancellationToken);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => GalleryImageRestClient.CreateListAllRequest(Id.SubscriptionId);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => GalleryImageRestClient.CreateListAllNextPageRequest(nextLink, Id.SubscriptionId);
+            return GeneratorPageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, e => new GalleryImageResource(Client, GalleryImageData.DeserializeGalleryImageData(e)), GalleryImageClientDiagnostics, Pipeline, "SubscriptionResourceExtensionClient.GetGalleryImages", "value", "nextLink", cancellationToken);
         }
 
         /// <summary>
-        /// List all HCI clusters in a subscription.
+        /// Lists all of the gallery images in the specified subscription. Use the nextLink property in the response to get the next page of gallery images.
         /// <list type="bullet">
         /// <item>
         /// <term>Request Path</term>
-        /// <description>/subscriptions/{subscriptionId}/providers/Microsoft.AzureStackHCI/clusters</description>
+        /// <description>/subscriptions/{subscriptionId}/providers/Microsoft.AzureStackHCI/galleryImages</description>
         /// </item>
         /// <item>
         /// <term>Operation Id</term>
-        /// <description>Clusters_ListBySubscription</description>
+        /// <description>GalleryImages_ListAll</description>
         /// </item>
         /// </list>
         /// </summary>
         /// <param name="cancellationToken"> The cancellation token to use. </param>
-        /// <returns> A collection of <see cref="HciClusterResource" /> that may take multiple service requests to iterate over. </returns>
-        public virtual Pageable<HciClusterResource> GetHciClusters(CancellationToken cancellationToken = default)
+        /// <returns> A collection of <see cref="GalleryImageResource" /> that may take multiple service requests to iterate over. </returns>
+        public virtual Pageable<GalleryImageResource> GetGalleryImages(CancellationToken cancellationToken = default)
         {
-            HttpMessage FirstPageRequest(int? pageSizeHint) => HciClusterClustersRestClient.CreateListBySubscriptionRequest(Id.SubscriptionId);
-            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => HciClusterClustersRestClient.CreateListBySubscriptionNextPageRequest(nextLink, Id.SubscriptionId);
-            return GeneratorPageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, e => new HciClusterResource(Client, HciClusterData.DeserializeHciClusterData(e)), HciClusterClustersClientDiagnostics, Pipeline, "SubscriptionResourceExtensionClient.GetHciClusters", "value", "nextLink", cancellationToken);
+            HttpMessage FirstPageRequest(int? pageSizeHint) => GalleryImageRestClient.CreateListAllRequest(Id.SubscriptionId);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => GalleryImageRestClient.CreateListAllNextPageRequest(nextLink, Id.SubscriptionId);
+            return GeneratorPageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, e => new GalleryImageResource(Client, GalleryImageData.DeserializeGalleryImageData(e)), GalleryImageClientDiagnostics, Pipeline, "SubscriptionResourceExtensionClient.GetGalleryImages", "value", "nextLink", cancellationToken);
+        }
+
+        /// <summary>
+        /// Lists all of the logical networks in the specified subscription. Use the nextLink property in the response to get the next page of logical networks.
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Request Path</term>
+        /// <description>/subscriptions/{subscriptionId}/providers/Microsoft.AzureStackHCI/logicalNetworks</description>
+        /// </item>
+        /// <item>
+        /// <term>Operation Id</term>
+        /// <description>LogicalNetworks_ListAll</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        /// <returns> An async collection of <see cref="LogicalNetworkResource" /> that may take multiple service requests to iterate over. </returns>
+        public virtual AsyncPageable<LogicalNetworkResource> GetLogicalNetworksAsync(CancellationToken cancellationToken = default)
+        {
+            HttpMessage FirstPageRequest(int? pageSizeHint) => LogicalNetworkRestClient.CreateListAllRequest(Id.SubscriptionId);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => LogicalNetworkRestClient.CreateListAllNextPageRequest(nextLink, Id.SubscriptionId);
+            return GeneratorPageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, e => new LogicalNetworkResource(Client, LogicalNetworkData.DeserializeLogicalNetworkData(e)), LogicalNetworkClientDiagnostics, Pipeline, "SubscriptionResourceExtensionClient.GetLogicalNetworks", "value", "nextLink", cancellationToken);
+        }
+
+        /// <summary>
+        /// Lists all of the logical networks in the specified subscription. Use the nextLink property in the response to get the next page of logical networks.
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Request Path</term>
+        /// <description>/subscriptions/{subscriptionId}/providers/Microsoft.AzureStackHCI/logicalNetworks</description>
+        /// </item>
+        /// <item>
+        /// <term>Operation Id</term>
+        /// <description>LogicalNetworks_ListAll</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        /// <returns> A collection of <see cref="LogicalNetworkResource" /> that may take multiple service requests to iterate over. </returns>
+        public virtual Pageable<LogicalNetworkResource> GetLogicalNetworks(CancellationToken cancellationToken = default)
+        {
+            HttpMessage FirstPageRequest(int? pageSizeHint) => LogicalNetworkRestClient.CreateListAllRequest(Id.SubscriptionId);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => LogicalNetworkRestClient.CreateListAllNextPageRequest(nextLink, Id.SubscriptionId);
+            return GeneratorPageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, e => new LogicalNetworkResource(Client, LogicalNetworkData.DeserializeLogicalNetworkData(e)), LogicalNetworkClientDiagnostics, Pipeline, "SubscriptionResourceExtensionClient.GetLogicalNetworks", "value", "nextLink", cancellationToken);
+        }
+
+        /// <summary>
+        /// Lists all of the marketplace gallery images in the specified subscription. Use the nextLink property in the response to get the next page of marketplace gallery images.
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Request Path</term>
+        /// <description>/subscriptions/{subscriptionId}/providers/Microsoft.AzureStackHCI/marketplaceGalleryImages</description>
+        /// </item>
+        /// <item>
+        /// <term>Operation Id</term>
+        /// <description>MarketplaceGalleryImages_ListAll</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        /// <returns> An async collection of <see cref="MarketplaceGalleryImageResource" /> that may take multiple service requests to iterate over. </returns>
+        public virtual AsyncPageable<MarketplaceGalleryImageResource> GetMarketplaceGalleryImagesAsync(CancellationToken cancellationToken = default)
+        {
+            HttpMessage FirstPageRequest(int? pageSizeHint) => MarketplaceGalleryImageRestClient.CreateListAllRequest(Id.SubscriptionId);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => MarketplaceGalleryImageRestClient.CreateListAllNextPageRequest(nextLink, Id.SubscriptionId);
+            return GeneratorPageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, e => new MarketplaceGalleryImageResource(Client, MarketplaceGalleryImageData.DeserializeMarketplaceGalleryImageData(e)), MarketplaceGalleryImageClientDiagnostics, Pipeline, "SubscriptionResourceExtensionClient.GetMarketplaceGalleryImages", "value", "nextLink", cancellationToken);
+        }
+
+        /// <summary>
+        /// Lists all of the marketplace gallery images in the specified subscription. Use the nextLink property in the response to get the next page of marketplace gallery images.
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Request Path</term>
+        /// <description>/subscriptions/{subscriptionId}/providers/Microsoft.AzureStackHCI/marketplaceGalleryImages</description>
+        /// </item>
+        /// <item>
+        /// <term>Operation Id</term>
+        /// <description>MarketplaceGalleryImages_ListAll</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        /// <returns> A collection of <see cref="MarketplaceGalleryImageResource" /> that may take multiple service requests to iterate over. </returns>
+        public virtual Pageable<MarketplaceGalleryImageResource> GetMarketplaceGalleryImages(CancellationToken cancellationToken = default)
+        {
+            HttpMessage FirstPageRequest(int? pageSizeHint) => MarketplaceGalleryImageRestClient.CreateListAllRequest(Id.SubscriptionId);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => MarketplaceGalleryImageRestClient.CreateListAllNextPageRequest(nextLink, Id.SubscriptionId);
+            return GeneratorPageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, e => new MarketplaceGalleryImageResource(Client, MarketplaceGalleryImageData.DeserializeMarketplaceGalleryImageData(e)), MarketplaceGalleryImageClientDiagnostics, Pipeline, "SubscriptionResourceExtensionClient.GetMarketplaceGalleryImages", "value", "nextLink", cancellationToken);
+        }
+
+        /// <summary>
+        /// Lists all of the network interfaces in the specified subscription. Use the nextLink property in the response to get the next page of network interfaces.
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Request Path</term>
+        /// <description>/subscriptions/{subscriptionId}/providers/Microsoft.AzureStackHCI/networkInterfaces</description>
+        /// </item>
+        /// <item>
+        /// <term>Operation Id</term>
+        /// <description>NetworkInterfaces_ListAll</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        /// <returns> An async collection of <see cref="NetworkInterfaceResource" /> that may take multiple service requests to iterate over. </returns>
+        public virtual AsyncPageable<NetworkInterfaceResource> GetNetworkInterfacesAsync(CancellationToken cancellationToken = default)
+        {
+            HttpMessage FirstPageRequest(int? pageSizeHint) => NetworkInterfaceRestClient.CreateListAllRequest(Id.SubscriptionId);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => NetworkInterfaceRestClient.CreateListAllNextPageRequest(nextLink, Id.SubscriptionId);
+            return GeneratorPageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, e => new NetworkInterfaceResource(Client, NetworkInterfaceData.DeserializeNetworkInterfaceData(e)), NetworkInterfaceClientDiagnostics, Pipeline, "SubscriptionResourceExtensionClient.GetNetworkInterfaces", "value", "nextLink", cancellationToken);
+        }
+
+        /// <summary>
+        /// Lists all of the network interfaces in the specified subscription. Use the nextLink property in the response to get the next page of network interfaces.
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Request Path</term>
+        /// <description>/subscriptions/{subscriptionId}/providers/Microsoft.AzureStackHCI/networkInterfaces</description>
+        /// </item>
+        /// <item>
+        /// <term>Operation Id</term>
+        /// <description>NetworkInterfaces_ListAll</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        /// <returns> A collection of <see cref="NetworkInterfaceResource" /> that may take multiple service requests to iterate over. </returns>
+        public virtual Pageable<NetworkInterfaceResource> GetNetworkInterfaces(CancellationToken cancellationToken = default)
+        {
+            HttpMessage FirstPageRequest(int? pageSizeHint) => NetworkInterfaceRestClient.CreateListAllRequest(Id.SubscriptionId);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => NetworkInterfaceRestClient.CreateListAllNextPageRequest(nextLink, Id.SubscriptionId);
+            return GeneratorPageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, e => new NetworkInterfaceResource(Client, NetworkInterfaceData.DeserializeNetworkInterfaceData(e)), NetworkInterfaceClientDiagnostics, Pipeline, "SubscriptionResourceExtensionClient.GetNetworkInterfaces", "value", "nextLink", cancellationToken);
+        }
+
+        /// <summary>
+        /// Lists all of the storage containers in the specified subscription. Use the nextLink property in the response to get the next page of storage containers.
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Request Path</term>
+        /// <description>/subscriptions/{subscriptionId}/providers/Microsoft.AzureStackHCI/storageContainers</description>
+        /// </item>
+        /// <item>
+        /// <term>Operation Id</term>
+        /// <description>StorageContainers_ListAll</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        /// <returns> An async collection of <see cref="StorageContainerResource" /> that may take multiple service requests to iterate over. </returns>
+        public virtual AsyncPageable<StorageContainerResource> GetStorageContainersAsync(CancellationToken cancellationToken = default)
+        {
+            HttpMessage FirstPageRequest(int? pageSizeHint) => StorageContainerRestClient.CreateListAllRequest(Id.SubscriptionId);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => StorageContainerRestClient.CreateListAllNextPageRequest(nextLink, Id.SubscriptionId);
+            return GeneratorPageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, e => new StorageContainerResource(Client, StorageContainerData.DeserializeStorageContainerData(e)), StorageContainerClientDiagnostics, Pipeline, "SubscriptionResourceExtensionClient.GetStorageContainers", "value", "nextLink", cancellationToken);
+        }
+
+        /// <summary>
+        /// Lists all of the storage containers in the specified subscription. Use the nextLink property in the response to get the next page of storage containers.
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Request Path</term>
+        /// <description>/subscriptions/{subscriptionId}/providers/Microsoft.AzureStackHCI/storageContainers</description>
+        /// </item>
+        /// <item>
+        /// <term>Operation Id</term>
+        /// <description>StorageContainers_ListAll</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        /// <returns> A collection of <see cref="StorageContainerResource" /> that may take multiple service requests to iterate over. </returns>
+        public virtual Pageable<StorageContainerResource> GetStorageContainers(CancellationToken cancellationToken = default)
+        {
+            HttpMessage FirstPageRequest(int? pageSizeHint) => StorageContainerRestClient.CreateListAllRequest(Id.SubscriptionId);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => StorageContainerRestClient.CreateListAllNextPageRequest(nextLink, Id.SubscriptionId);
+            return GeneratorPageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, e => new StorageContainerResource(Client, StorageContainerData.DeserializeStorageContainerData(e)), StorageContainerClientDiagnostics, Pipeline, "SubscriptionResourceExtensionClient.GetStorageContainers", "value", "nextLink", cancellationToken);
+        }
+
+        /// <summary>
+        /// Lists all of the virtual hard disks in the specified subscription. Use the nextLink property in the response to get the next page of virtual hard disks.
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Request Path</term>
+        /// <description>/subscriptions/{subscriptionId}/providers/Microsoft.AzureStackHCI/virtualHardDisks</description>
+        /// </item>
+        /// <item>
+        /// <term>Operation Id</term>
+        /// <description>VirtualHardDisks_ListAll</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        /// <returns> An async collection of <see cref="VirtualHardDiskResource" /> that may take multiple service requests to iterate over. </returns>
+        public virtual AsyncPageable<VirtualHardDiskResource> GetVirtualHardDisksAsync(CancellationToken cancellationToken = default)
+        {
+            HttpMessage FirstPageRequest(int? pageSizeHint) => VirtualHardDiskRestClient.CreateListAllRequest(Id.SubscriptionId);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => VirtualHardDiskRestClient.CreateListAllNextPageRequest(nextLink, Id.SubscriptionId);
+            return GeneratorPageableHelpers.CreateAsyncPageable(FirstPageRequest, NextPageRequest, e => new VirtualHardDiskResource(Client, VirtualHardDiskData.DeserializeVirtualHardDiskData(e)), VirtualHardDiskClientDiagnostics, Pipeline, "SubscriptionResourceExtensionClient.GetVirtualHardDisks", "value", "nextLink", cancellationToken);
+        }
+
+        /// <summary>
+        /// Lists all of the virtual hard disks in the specified subscription. Use the nextLink property in the response to get the next page of virtual hard disks.
+        /// <list type="bullet">
+        /// <item>
+        /// <term>Request Path</term>
+        /// <description>/subscriptions/{subscriptionId}/providers/Microsoft.AzureStackHCI/virtualHardDisks</description>
+        /// </item>
+        /// <item>
+        /// <term>Operation Id</term>
+        /// <description>VirtualHardDisks_ListAll</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <param name="cancellationToken"> The cancellation token to use. </param>
+        /// <returns> A collection of <see cref="VirtualHardDiskResource" /> that may take multiple service requests to iterate over. </returns>
+        public virtual Pageable<VirtualHardDiskResource> GetVirtualHardDisks(CancellationToken cancellationToken = default)
+        {
+            HttpMessage FirstPageRequest(int? pageSizeHint) => VirtualHardDiskRestClient.CreateListAllRequest(Id.SubscriptionId);
+            HttpMessage NextPageRequest(int? pageSizeHint, string nextLink) => VirtualHardDiskRestClient.CreateListAllNextPageRequest(nextLink, Id.SubscriptionId);
+            return GeneratorPageableHelpers.CreatePageable(FirstPageRequest, NextPageRequest, e => new VirtualHardDiskResource(Client, VirtualHardDiskData.DeserializeVirtualHardDiskData(e)), VirtualHardDiskClientDiagnostics, Pipeline, "SubscriptionResourceExtensionClient.GetVirtualHardDisks", "value", "nextLink", cancellationToken);
         }
     }
 }

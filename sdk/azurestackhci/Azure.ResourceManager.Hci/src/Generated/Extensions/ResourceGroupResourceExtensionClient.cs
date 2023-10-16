@@ -31,11 +31,46 @@ namespace Azure.ResourceManager.Hci
             return apiVersion;
         }
 
-        /// <summary> Gets a collection of HciClusterResources in the ResourceGroupResource. </summary>
-        /// <returns> An object representing collection of HciClusterResources and their operations over a HciClusterResource. </returns>
-        public virtual HciClusterCollection GetHciClusters()
+        /// <summary> Gets a collection of GalleryImageResources in the ResourceGroupResource. </summary>
+        /// <returns> An object representing collection of GalleryImageResources and their operations over a GalleryImageResource. </returns>
+        public virtual GalleryImageCollection GetGalleryImages()
         {
-            return GetCachedClient(Client => new HciClusterCollection(Client, Id));
+            return GetCachedClient(Client => new GalleryImageCollection(Client, Id));
+        }
+
+        /// <summary> Gets a collection of LogicalNetworkResources in the ResourceGroupResource. </summary>
+        /// <returns> An object representing collection of LogicalNetworkResources and their operations over a LogicalNetworkResource. </returns>
+        public virtual LogicalNetworkCollection GetLogicalNetworks()
+        {
+            return GetCachedClient(Client => new LogicalNetworkCollection(Client, Id));
+        }
+
+        /// <summary> Gets a collection of MarketplaceGalleryImageResources in the ResourceGroupResource. </summary>
+        /// <returns> An object representing collection of MarketplaceGalleryImageResources and their operations over a MarketplaceGalleryImageResource. </returns>
+        public virtual MarketplaceGalleryImageCollection GetMarketplaceGalleryImages()
+        {
+            return GetCachedClient(Client => new MarketplaceGalleryImageCollection(Client, Id));
+        }
+
+        /// <summary> Gets a collection of NetworkInterfaceResources in the ResourceGroupResource. </summary>
+        /// <returns> An object representing collection of NetworkInterfaceResources and their operations over a NetworkInterfaceResource. </returns>
+        public virtual NetworkInterfaceCollection GetNetworkInterfaces()
+        {
+            return GetCachedClient(Client => new NetworkInterfaceCollection(Client, Id));
+        }
+
+        /// <summary> Gets a collection of StorageContainerResources in the ResourceGroupResource. </summary>
+        /// <returns> An object representing collection of StorageContainerResources and their operations over a StorageContainerResource. </returns>
+        public virtual StorageContainerCollection GetStorageContainers()
+        {
+            return GetCachedClient(Client => new StorageContainerCollection(Client, Id));
+        }
+
+        /// <summary> Gets a collection of VirtualHardDiskResources in the ResourceGroupResource. </summary>
+        /// <returns> An object representing collection of VirtualHardDiskResources and their operations over a VirtualHardDiskResource. </returns>
+        public virtual VirtualHardDiskCollection GetVirtualHardDisks()
+        {
+            return GetCachedClient(Client => new VirtualHardDiskCollection(Client, Id));
         }
     }
 }

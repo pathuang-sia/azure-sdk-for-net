@@ -44,43 +44,53 @@ namespace Azure.ResourceManager.Hci.Tests
             return lro.Value;
         }
 
-        protected async Task<HciClusterResource> CreateHciClusterAsync(ResourceGroupResource resourceGroup, string clusterName, AzureLocation? location = null)
+        protected async Task<GalleryImageResource> CreateGalleryImageAsync(ResourceGroupResource resourceGroup, string galleryImageName, AzureLocation location)
         {
-            var clusterData = new HciClusterData(location == null ? resourceGroup.Data.Location : location.Value)
+            var imageData = new GalleryImageData(location)
             {
-                AadClientId = new Guid(TestEnvironment.ClientId),
-                AadTenantId = new Guid(TestEnvironment.TenantId),
-                TypeIdentityType = HciManagedServiceIdentityType.None
+                OSType = OperatingSystemType.Windows
             };
-            var lro = await resourceGroup.GetHciClusters().CreateOrUpdateAsync(WaitUntil.Completed, clusterName, clusterData);
+            var lro = await resourceGroup.GetGalleryImages().CreateOrUpdateAsync(WaitUntil.Completed, galleryImageName, imageData);
             return lro.Value;
         }
 
-        protected async Task<ArcSettingResource> CreateArcSettingAsync(HciClusterResource cluster, string arcSettingName)
-        {
-            var arcSettingData = new ArcSettingData();
-            var lro = await cluster.GetArcSettings().CreateOrUpdateAsync(WaitUntil.Completed, arcSettingName, arcSettingData);
-            return lro.Value;
-        }
+        //protected async Task<HciClusterResource> CreateHciClusterAsync(ResourceGroupResource resourceGroup, string clusterName, AzureLocation? location = null)
+        //{
+        //    var clusterData = new HciClusterData(location == null ? resourceGroup.Data.Location : location.Value)
+        //    {
+        //        AadClientId = new Guid(TestEnvironment.ClientId),
+        //        AadTenantId = new Guid(TestEnvironment.TenantId),
+        //        TypeIdentityType = HciManagedServiceIdentityType.None
+        //    };
+        //    var lro = await resourceGroup.GetHciClusters().CreateOrUpdateAsync(WaitUntil.Completed, clusterName, clusterData);
+        //    return lro.Value;
+        //}
 
-        protected async Task<ArcExtensionResource> CreateArcExtensionAsync(ArcSettingResource arcSetting, string arcExtensionName)
-        {
-            var arcExtensionData = new ArcExtensionData()
-            {
-                ArcExtensionType = "MicrosoftMonitoringAgent",
-                Publisher = "Microsoft",
-                TypeHandlerVersion = "1.10",
-                Settings = BinaryData.FromObjectAsJson(new Dictionary<string, object>()
-                {
-                    { "workspaceId", "5dcf9bc1-c220-4ed6-84f3-6919c3a393b6" }
-                }),
-                ProtectedSettings = BinaryData.FromObjectAsJson(new Dictionary<string, object>()
-                {
-                    { "workspaceKey", "5dcf9bc1-c220-4ed6-84f3-6919c3a393b6" }
-                })
-            };
-            var lro = await arcSetting.GetArcExtensions().CreateOrUpdateAsync(WaitUntil.Completed, arcExtensionName, arcExtensionData);
-            return lro.Value;
-        }
+        //protected async Task<ArcSettingResource> CreateArcSettingAsync(HciClusterResource cluster, string arcSettingName)
+        //{
+        //    var arcSettingData = new ArcSettingData();
+        //    var lro = await cluster.GetArcSettings().CreateOrUpdateAsync(WaitUntil.Completed, arcSettingName, arcSettingData);
+        //    return lro.Value;
+        //}
+
+        //protected async Task<ArcExtensionResource> CreateArcExtensionAsync(ArcSettingResource arcSetting, string arcExtensionName)
+        //{
+        //    var arcExtensionData = new ArcExtensionData()
+        //    {
+        //        ArcExtensionType = "MicrosoftMonitoringAgent",
+        //        Publisher = "Microsoft",
+        //        TypeHandlerVersion = "1.10",
+        //        Settings = BinaryData.FromObjectAsJson(new Dictionary<string, object>()
+        //        {
+        //            { "workspaceId", "5dcf9bc1-c220-4ed6-84f3-6919c3a393b6" }
+        //        }),
+        //        ProtectedSettings = BinaryData.FromObjectAsJson(new Dictionary<string, object>()
+        //        {
+        //            { "workspaceKey", "5dcf9bc1-c220-4ed6-84f3-6919c3a393b6" }
+        //        })
+        //    };
+        //    var lro = await arcSetting.GetArcExtensions().CreateOrUpdateAsync(WaitUntil.Completed, arcExtensionName, arcExtensionData);
+        //    return lro.Value;
+        //}
     }
 }

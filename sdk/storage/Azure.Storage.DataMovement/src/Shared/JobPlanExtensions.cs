@@ -46,51 +46,6 @@ namespace Azure.Storage.DataMovement
             return result;
         }
 
-        internal static async Task<(string Source, string Destination)> GetResourcePathsAsync(
-            this TransferCheckpointer checkpointer,
-            string transferId,
-            CancellationToken cancellationToken)
-        {
-            int startIndex = DataMovementConstants.JobPlanFile.ParentSourcePathOffsetIndex;
-
-            string parentSourcePath = default;
-            string parentDestinationPath = default;
-            using (Stream stream = await checkpointer.ReadJobPlanFileAsync(
-                transferId: transferId,
-                offset: startIndex,
-                length: 0, // Read to the end
-                cancellationToken: cancellationToken).ConfigureAwait(false))
-            {
-                BinaryReader reader = new BinaryReader(stream);
-
-                // ParentSourcePath offset/length
-                int parentSourcePathOffset = reader.ReadInt32() - startIndex;
-                int parentSourcePathLength = reader.ReadInt32();
-
-                // ParentDestinationPath offset/length
-                int parentDestinationPathOffset = reader.ReadInt32() - startIndex;
-                int parentDestinationPathLength = reader.ReadInt32();
-
-                // ParentSourcePath
-                if (parentSourcePathOffset > 0)
-                {
-                    reader.BaseStream.Position = parentSourcePathOffset;
-                    byte[] parentSourcePathBytes = reader.ReadBytes(parentSourcePathLength);
-                    parentSourcePath = parentSourcePathBytes.ToString(parentSourcePathLength);
-                }
-
-                // ParentDestinationPath
-                if (parentDestinationPathOffset > 0)
-                {
-                    reader.BaseStream.Position = parentDestinationPathOffset;
-                    byte[] parentDestinationPathBytes = reader.ReadBytes(parentDestinationPathLength);
-                    parentDestinationPath = parentDestinationPathBytes.ToString(parentDestinationPathLength);
-                }
-            }
-
-            return (parentSourcePath, parentDestinationPath);
-        }
-
         internal static async Task<(string Source, string Destination)> GetResourceIdsAsync(
             this TransferCheckpointer checkpointer,
             string transferId,
@@ -302,25 +257,24 @@ namespace Azure.Storage.DataMovement
         }
 
         /// <summary>
-        /// Writes the length and offset field for the given byte array
-        /// and increments currentVariableLengthIndex accordingly.
+        /// Writes the given length and offset and increments currentOffset accordingly.
         /// </summary>
         /// <param name="writer">The writer to write to.</param>
-        /// <param name="bytes">The data to write info about.</param>
-        /// <param name="currentVariableLengthIndex">
-        /// A reference to the current index of the variable length fields
+        /// <param name="length">The length of the variable length field.</param>
+        /// <param name="currentOffset">
+        /// A reference to the current offset of the variable length fields
         /// that will be used to set the offset and then incremented.
         /// </param>
         internal static void WriteVariableLengthFieldInfo(
             BinaryWriter writer,
-            byte[] bytes,
-            ref int currentVariableLengthIndex)
+            int length,
+            ref int currentOffset)
         {
             // Write the offset, -1 if size is 0
-            if (bytes.Length > 0)
+            if (length > 0)
             {
-                writer.Write(currentVariableLengthIndex);
-                currentVariableLengthIndex += bytes.Length;
+                writer.Write(currentOffset);
+                currentOffset += length;
             }
             else
             {
@@ -328,7 +282,16 @@ namespace Azure.Storage.DataMovement
             }
 
             // Write the length
-            writer.Write(bytes.Length);
+            writer.Write(length);
+        }
+
+        internal static string ToSanitizedString(this Uri uri)
+        {
+            UriBuilder builder = new(uri);
+
+            // Remove any query parameters (including SAS)
+            builder.Query = string.Empty;
+            return builder.Uri.AbsoluteUri;
         }
     }
 }

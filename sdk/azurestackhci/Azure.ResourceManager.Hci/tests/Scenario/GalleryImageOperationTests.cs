@@ -20,8 +20,6 @@ namespace Azure.ResourceManager.Hci.Tests
 
         private GalleryImageResource _galleryImage;
 
-        private GalleryImageData _data;
-
         public GalleryImageOperationTests(bool isAsync)
             : base(isAsync, RecordedTestMode.Record)
         {
@@ -30,7 +28,7 @@ namespace Azure.ResourceManager.Hci.Tests
         private async Task<GalleryImageResource> CreateGalleryImageAsync(string galleryImageName)
         {
             var location = AzureLocation.WestUS;
-            _resourceGroup = await CreateResourceGroupAsync(Subscription, "rg-pathuangazurestackhci", location);
+            _resourceGroup = await CreateResourceGroupAsync(Subscription, "hci-dotnet-test-rg", location);
             _galleryImage = await CreateGalleryImageAsync(_resourceGroup, "hci-gallery-image", location);
             return _galleryImage;
         }

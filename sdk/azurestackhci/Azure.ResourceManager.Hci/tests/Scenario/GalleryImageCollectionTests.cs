@@ -29,7 +29,7 @@ namespace Azure.ResourceManager.Hci.Tests
             var resourceGroup = await CreateResourceGroupAsync(Subscription, "hci-galleryImage-rg", location);
             var galleryImageCollection = resourceGroup.GetGalleryImages();
             var galleryImageName = Recording.GenerateAssetName("hci-galleryImage");
-            var galleryImage = await CreateGalleryImageAsync(resourceGroup, galleryImageName);
+            var galleryImage = await CreateGalleryImageAsync(resourceGroup, galleryImageName, location);
             var galleryImageData = galleryImage.Data;
             Assert.AreEqual(galleryImageData.Name, galleryImageName);
             Assert.AreEqual(galleryImageData.Location, location);
